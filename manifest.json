@@ -1,9 +1,13 @@
 {
 	"manifest_version": 3,
 	"name": "shit.so — give a shit",
-	"version": "0.1.0",
-	"description": "See how much shit people on X actually are. Vote with one of ten emojis.",
+	"version": "0.2.0",
+	"description": "Give a shit to anyone on X without leaving the feed. One account, one vote per person.",
 	"icons": { "16": "icons/16.png", "48": "icons/48.png", "128": "icons/128.png" },
+	"permissions": ["storage"],
+	"host_permissions": ["https://shit.so/*", "https://shitso.vercel.app/*"],
+	"background": { "service_worker": "background.js" },
+	"action": { "default_popup": "popup.html", "default_title": "shit.so" },
 	"content_scripts": [
 		{
 			"matches": ["https://x.com/*", "https://twitter.com/*"],
@@ -11,6 +15,5 @@
 			"css": ["content.css"],
 			"run_at": "document_idle"
 		}
-	],
-	"host_permissions": ["https://shit.so/*", "https://shitso.vercel.app/*"]
+	]
 }
