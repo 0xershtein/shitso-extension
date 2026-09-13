@@ -240,9 +240,61 @@ function injectProfile() {
 		existing?.remove();
 		return;
 	}
+	observeProfile(handle);
 	if (existing && existing.dataset.handle === handle) return;
 	existing?.remove();
 	anchor.insertAdjacentElement('afterend', makePill(handle, true));
+}
+
+// ---------- profile observation (follower counts, no X API cost) ----------
+// X renders compact numbers: "1,234", "12.5K", "1.2M" (en) or "12,5 B", "1,2 Mn" (tr).
+function parseCompact(text, lang = (document.documentElement.lang || navigator.language || '').toLowerCase()) {
+	if (text == null) return null;
+	const s = String(text).replace(/[\s\u00a0\u202f]+/g, '');
+	const m = s.match(/^([\d.,]+)([A-Za-z]{0,2})$/);
+	if (!m) return null;
+	const num = m[1];
+	const suffix = m[2].toLowerCase();
+	if (suffix === '') {
+		if (!/^(\d{1,3}([.,]\d{3})+|\d+)$/.test(num)) return null;
+		return parseInt(num.replace(/[.,]/g, ''), 10);
+	}
+	// "B" is billion on the English UI and "bin" (thousand) on the Turkish UI.
+	const factor = { k: 1e3, m: 1e6, mn: 1e6, b: lang.startsWith('tr') ? 1e3 : 1e9 }[suffix];
+	if (!factor) return null;
+	const parts = num.split(/[.,]/);
+	if (parts.length > 2 || parts.some((p) => p === '')) return null;
+	const val = parseFloat(parts.join('.'));
+	return Number.isFinite(val) ? Math.round(val * factor) : null;
+}
+
+const observed = new Map(); // handle -> { at, followers, following }
+const OBSERVE_TTL = 10 * 60_000;
+
+function readProfileCounts(handle) {
+	const pick = (suffix) => {
+		// X keeps the handle's original casing in hrefs; match case-insensitively.
+		const a =
+			document.querySelector(`a[href="/${handle}/${suffix}" i]`) ||
+			document.querySelector(`a[href$="/${handle}/${suffix}" i]`);
+		if (!a) return null;
+		const span = a.querySelector('span span') || a.querySelector('span');
+		return parseCompact(span?.textContent);
+	};
+	const followers = pick('verified_followers') ?? pick('followers');
+	const following = pick('following');
+	const nameSpan = document.querySelector('[data-testid="UserName"] span');
+	const name = nameSpan?.textContent?.trim() || undefined;
+	return { followers, following, name };
+}
+
+function observeProfile(handle) {
+	const { followers, following, name } = readProfileCounts(handle);
+	if (followers == null || following == null) return;
+	const prev = observed.get(handle);
+	if (prev && Date.now() - prev.at < OBSERVE_TTL && prev.followers === followers && prev.following === following) return;
+	observed.set(handle, { at: Date.now(), followers, following });
+	send({ type: 'observe', handle, followers, following, name }).catch(() => {});
 }
 
 let scheduled = false;
