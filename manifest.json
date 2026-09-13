@@ -12,5 +12,5 @@
 			"run_at": "document_idle"
 		}
 	],
-	"host_permissions": ["https://shit.so/*"]
+	"host_permissions": ["https://shit.so/*", "https://shitso.vercel.app/*"]
 }

@@ -1,6 +1,9 @@
 // shit.so — injects a "give a shit" badge under X profile headers.
-const API = 'https://shit.so/api/v1/';
-const SITE = 'https://shit.so/';
+// shit.so DNS may lag; fall back to the vercel alias.
+const HOSTS = ['https://shit.so', 'https://shitso.vercel.app'];
+let host = HOSTS[0];
+const API = () => host + '/api/v1/';
+const SITE = () => host + '/';
 const RESERVED = new Set([
 	'home', 'explore', 'notifications', 'messages', 'i', 'settings', 'search',
 	'compose', 'login', 'signup', 'logout', 'tos', 'privacy', 'about', 'jobs',
@@ -33,7 +36,7 @@ function render(handle, data) {
 
 	const a = document.createElement('a');
 	a.className = 'shitso-badge';
-	a.href = SITE + handle;
+	a.href = SITE() + handle;
 	a.target = '_blank';
 	a.rel = 'noopener';
 
@@ -68,11 +71,17 @@ async function tick() {
 	document.querySelectorAll('.shitso-badge').forEach((n) => n.remove());
 
 	let data = null;
-	try {
-		const res = await fetch(API + handle);
-		if (res.ok) data = await res.json();
-	} catch {
-		// offline or blocked; still render the CTA
+	for (const h of [host, ...HOSTS.filter((x) => x !== host)]) {
+		try {
+			const res = await fetch(h + '/api/v1/' + handle);
+			if (res.ok) {
+				data = await res.json();
+				host = h;
+				break;
+			}
+		} catch {
+			// try next host
+		}
 	}
 	if (currentHandle() === handle) render(handle, data);
 }
