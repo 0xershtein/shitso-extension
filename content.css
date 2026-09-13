@@ -1,0 +1,33 @@
+.shitso-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin: 8px 0 4px;
+	padding: 6px 10px;
+	border-radius: 9999px;
+	border: 1px solid rgba(128, 128, 128, 0.4);
+	font: 600 13px/1 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	color: inherit;
+	text-decoration: none;
+	cursor: pointer;
+	transition: background 0.15s;
+}
+.shitso-badge:hover {
+	background: rgba(128, 128, 128, 0.15);
+}
+.shitso-badge__emoji {
+	font-size: 15px;
+}
+.shitso-badge__score {
+	font-weight: 800;
+}
+.shitso-badge__score--bad {
+	color: #f59e0b;
+}
+.shitso-badge__score--good {
+	color: #10b981;
+}
+.shitso-badge__cta {
+	opacity: 0.65;
+	font-weight: 500;
+}
