@@ -4,7 +4,7 @@ const EMOJIS = [
 	{ key: 'cap', char: '🧢', en: 'cap', tr: 'dümenci', bad: true },
 	{ key: 'clown', char: '🤡', en: 'clown', tr: 'palyaço', bad: true },
 	{ key: 'snake', char: '🐍', en: 'snake', tr: 'manipülatör', bad: true },
-	{ key: 'bot', char: '🤖', en: 'bot', tr: 'npc', bad: true },
+	{ key: 'bot', char: '🤖', en: 'npc', tr: 'npc', bad: true },
 	{ key: 'brain', char: '🧠', en: 'big brain', tr: 'yetkin', bad: false },
 	{ key: 'fire', char: '🔥', en: 'fire', tr: 'karizma', bad: false },
 	{ key: 'goat', char: '🐐', en: 'goat', tr: 'zirve', bad: false },
