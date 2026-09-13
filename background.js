@@ -55,7 +55,7 @@ chrome.runtime.onMessage.addListener((msg, _sender, reply) => {
 					await api('/api/v1/observe', {
 						method: 'POST',
 						headers: { 'content-type': 'application/json' },
-						body: JSON.stringify({ handle: msg.handle, followers: msg.followers, following: msg.following, name: msg.name })
+						body: JSON.stringify({ handle: msg.handle, followers: msg.followers, following: msg.following, name: msg.name, avatar: msg.avatar })
 					})
 				);
 			case 'signin': {

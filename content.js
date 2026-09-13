@@ -285,16 +285,18 @@ function readProfileCounts(handle) {
 	const following = pick('following');
 	const nameSpan = document.querySelector('[data-testid="UserName"] span');
 	const name = nameSpan?.textContent?.trim() || undefined;
-	return { followers, following, name };
+	const avatarImg = document.querySelector(`a[href="/${handle}/photo" i] img[src*="profile_images"]`) || document.querySelector('img[src*="profile_images"][src*="_200x200"], img[src*="profile_images"][src*="_400x400"]');
+	const avatar = avatarImg?.src || undefined;
+	return { followers, following, name, avatar };
 }
 
 function observeProfile(handle) {
-	const { followers, following, name } = readProfileCounts(handle);
+	const { followers, following, name, avatar } = readProfileCounts(handle);
 	if (followers == null || following == null) return;
 	const prev = observed.get(handle);
 	if (prev && Date.now() - prev.at < OBSERVE_TTL && prev.followers === followers && prev.following === following) return;
 	observed.set(handle, { at: Date.now(), followers, following });
-	send({ type: 'observe', handle, followers, following, name }).catch(() => {});
+	send({ type: 'observe', handle, followers, following, name, avatar }).catch(() => {});
 }
 
 let scheduled = false;
