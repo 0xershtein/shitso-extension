@@ -1,9 +1,8 @@
 // Service worker: talks to shit.so with the user's site session.
 // Extension requests with host permissions carry cookies regardless of SameSite,
 // so signing in on shit.so once is enough to vote from X.
-// shitso.vercel.app first until shit.so's DNS points at Vercel (the parked domain
-// currently accepts TCP and never answers, so every probe needs a timeout).
-const HOSTS = ['https://shitso.vercel.app', 'https://shit.so'];
+// shit.so is canonical; shitso.vercel.app stays as a fallback. Probes carry timeouts.
+const HOSTS = ['https://shit.so', 'https://shitso.vercel.app'];
 const PROBE_MS = 3000;
 let host = null;
 
@@ -32,6 +31,9 @@ async function api(path, init = {}) {
 	const body = await r.json().catch(() => ({}));
 	return { status: r.status, ...body };
 }
+
+// Forget a previously stored host on update so the canonical one gets re-probed.
+chrome.runtime.onInstalled.addListener(() => chrome.storage.local.remove('host'));
 
 chrome.runtime.onMessage.addListener((msg, _sender, reply) => {
 	(async () => {
