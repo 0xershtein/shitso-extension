@@ -1,7 +1,7 @@
 # shit.so chrome extension
 
 Shows a `💩 42% shit · 17 votes · give yours →` badge under every X profile header.
-Clicking it opens `shit.so/<handle>` where you can vote.
+Clicking it opens `shit.so/@<handle>` where you can vote.
 
 ## install (dev)
 

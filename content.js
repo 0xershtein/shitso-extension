@@ -36,7 +36,7 @@ function render(handle, data) {
 
 	const a = document.createElement('a');
 	a.className = 'shitso-badge';
-	a.href = SITE() + handle;
+	a.href = SITE() + '@' + handle;
 	a.target = '_blank';
 	a.rel = 'noopener';
 
