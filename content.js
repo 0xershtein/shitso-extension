@@ -5,8 +5,9 @@ const RESERVED = new Set([
 	'home', 'explore', 'notifications', 'messages', 'i', 'settings', 'search',
 	'compose', 'login', 'signup', 'logout', 'tos', 'privacy', 'about', 'jobs',
 	'hashtag', 'intent', 'share', 'account', 'follower_requests', 'communities',
-	'premium', 'grok', 'lists', 'bookmarks', 'verified', 'jobs'
+	'premium', 'grok', 'lists', 'bookmarks', 'verified'
 ]);
+const TIER_COLOR = { respected: '#10b981', questionable: '#eab308', certified: '#f59e0b', biohazard: '#ef4444' };
 
 let lastHandle = null;
 
@@ -19,8 +20,11 @@ function currentHandle() {
 }
 
 function findAnchor() {
-	// The profile header's "UserName" block; we attach right after it.
 	return document.querySelector('[data-testid="UserName"]');
+}
+
+function esc(s) {
+	return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 }
 
 function render(handle, data) {
@@ -34,11 +38,15 @@ function render(handle, data) {
 	a.rel = 'noopener';
 
 	if (data && data.total > 0) {
-		const bad = data.shitScore >= 50;
+		const tier = data.tier || {};
+		const color = TIER_COLOR[tier.key] || '#a3a3a3';
+		a.style.borderColor = color;
 		a.innerHTML =
-			`<span class="shitso-badge__emoji">${data.top ? data.top.char : '💩'}</span>` +
-			`<span class="shitso-badge__score ${bad ? 'shitso-badge__score--bad' : 'shitso-badge__score--good'}">${data.shitScore}% shit</span>` +
-			`<span class="shitso-badge__cta">· ${data.total} votes · give yours →</span>`;
+			`<span class="shitso-badge__emoji">${esc(tier.emoji || (data.top ? data.top.char : '💩'))}</span>` +
+			`<span class="shitso-badge__score" style="color:${color}">${esc(data.shitScore)}% shit</span>` +
+			(tier.key && tier.key !== 'unrated' ? `<span class="shitso-badge__tier" style="color:${color}">· ${esc(tier.label)}</span>` : '') +
+			`<span class="shitso-badge__cta">· ${esc(data.total)} votes${data.last24h ? ` · 🔥 ${esc(data.last24h)} today` : ''} · give yours →</span>`;
+		if (tier.warning) a.title = tier.warning;
 	} else {
 		a.innerHTML =
 			`<span class="shitso-badge__emoji">💩</span>` +
@@ -69,8 +77,5 @@ async function tick() {
 	if (currentHandle() === handle) render(handle, data);
 }
 
-new MutationObserver(() => tick()).observe(document.documentElement, {
-	childList: true,
-	subtree: true
-});
+new MutationObserver(() => tick()).observe(document.documentElement, { childList: true, subtree: true });
 tick();
