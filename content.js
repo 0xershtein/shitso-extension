@@ -1,15 +1,15 @@
 // shit.so content script: "give a shit" pills in the X feed + a badge on profile headers.
 const EMOJIS = [
-	{ key: 'shit', char: '💩', en: 'shit', tr: 'bok', bad: true },
-	{ key: 'cap', char: '🧢', en: 'cap', tr: 'yalan', bad: true },
+	{ key: 'shit', char: '💩', en: 'shit', tr: 'boktan', bad: true },
+	{ key: 'cap', char: '🧢', en: 'cap', tr: 'dümenci', bad: true },
 	{ key: 'clown', char: '🤡', en: 'clown', tr: 'palyaço', bad: true },
-	{ key: 'snake', char: '🐍', en: 'snake', tr: 'yılan', bad: true },
-	{ key: 'bot', char: '🤖', en: 'bot', tr: 'bot', bad: true },
-	{ key: 'brain', char: '🧠', en: 'big brain', tr: 'koca beyin', bad: false },
-	{ key: 'fire', char: '🔥', en: 'fire', tr: 'ateş', bad: false },
-	{ key: 'goat', char: '🐐', en: 'goat', tr: 'goat', bad: false },
-	{ key: 'respect', char: '🫡', en: 'respect', tr: 'saygı', bad: false },
-	{ key: 'gem', char: '💎', en: 'gem', tr: 'elmas', bad: false }
+	{ key: 'snake', char: '🐍', en: 'snake', tr: 'manipülatör', bad: true },
+	{ key: 'bot', char: '🤖', en: 'bot', tr: 'npc', bad: true },
+	{ key: 'brain', char: '🧠', en: 'big brain', tr: 'yetkin', bad: false },
+	{ key: 'fire', char: '🔥', en: 'fire', tr: 'karizma', bad: false },
+	{ key: 'goat', char: '🐐', en: 'goat', tr: 'zirve', bad: false },
+	{ key: 'respect', char: '🫡', en: 'respect', tr: 'hayranlık', bad: false },
+	{ key: 'gem', char: '💎', en: 'gem', tr: 'sahici', bad: false }
 ];
 const TIER = {
 	unrated: { color: '#a3a3a3', emoji: '❓', en: 'unrated', tr: 'puansız' },
