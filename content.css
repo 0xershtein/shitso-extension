@@ -24,6 +24,9 @@
 	background: rgba(128, 128, 128, 0.22);
 }
 .shitso-pill--big {
+	align-self: flex-start; /* X's profile header is a stretched flex column; stay pill-sized */
+	width: fit-content;
+	max-width: 100%;
 	margin: 10px 0 4px;
 	padding: 7px 14px;
 	font-size: 15px;
