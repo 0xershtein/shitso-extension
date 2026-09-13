@@ -20,11 +20,14 @@ const tr = (navigator.language || 'en').toLowerCase().startsWith('tr');
 	a.target = '_blank';
 	a.textContent = host.replace('https://', '');
 	actions.appendChild(a);
-	const reset = document.createElement('button');
-	reset.textContent = tr ? 'sunucuyu yeniden seç' : 'reset host';
-	reset.onclick = async () => {
-		await chrome.storage.local.remove('host');
-		window.close();
-	};
-	actions.appendChild(reset);
+	if (me.signedIn) {
+		const hint = document.createElement('p');
+		hint.style.marginTop = '10px';
+		hint.textContent = tr ? "siteden çıkış yaptıysan buradan tekrar giriş yapabilirsin." : 'signed out on the site? sign in again from here.';
+		actions.appendChild(hint);
+		const b = document.createElement('button');
+		b.textContent = tr ? 'tekrar giriş yap' : 'sign in again';
+		b.onclick = () => send({ type: 'signin' });
+		actions.appendChild(b);
+	}
 })();

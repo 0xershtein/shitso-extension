@@ -100,7 +100,7 @@ document.addEventListener('keydown', (e) => e.key === 'Escape' && closePicker())
 
 async function openPicker(pill, handle) {
 	closePicker();
-	if (!me) await refreshMe();
+	await refreshMe(); // cheap, and catches sign-out on the site
 	const data = cache.get(handle)?.data;
 	picker = document.createElement('div');
 	picker.className = 'shitso-picker';
