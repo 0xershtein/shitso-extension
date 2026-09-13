@@ -18,3 +18,8 @@ paying for the X API.
 3. Open any X profile or your feed.
 
 Host is auto-detected (`shit.so`, falling back to `shitso.vercel.app`); the popup can reset it.
+
+
+## ops
+
+`.github/workflows/xbot.yml` polls `shit.so/api/cron/xbot` every 5 minutes (the vote-by-tweet bot). It lives here because this repo is public, so Actions minutes are free. Needs a `CRON_SECRET` repository secret.
