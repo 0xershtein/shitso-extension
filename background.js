@@ -1,31 +1,34 @@
 // Service worker: talks to shit.so with the user's site session.
 // Extension requests with host permissions carry cookies regardless of SameSite,
 // so signing in on shit.so once is enough to vote from X.
-const HOSTS = ['https://shit.so', 'https://shitso.vercel.app'];
+// shitso.vercel.app first until shit.so's DNS points at Vercel (the parked domain
+// currently accepts TCP and never answers, so every probe needs a timeout).
+const HOSTS = ['https://shitso.vercel.app', 'https://shit.so'];
+const PROBE_MS = 3000;
 let host = null;
+
+async function probe(h) {
+	const r = await fetch(h + '/api/v1/me', { credentials: 'include', signal: AbortSignal.timeout(PROBE_MS) });
+	return r.ok;
+}
 
 async function pickHost() {
 	if (host) return host;
 	const stored = (await chrome.storage.local.get('host')).host;
-	if (stored) return (host = stored);
+	if (stored && (await probe(stored).catch(() => false))) return (host = stored);
 	for (const h of HOSTS) {
-		try {
-			const r = await fetch(h + '/api/v1/me', { credentials: 'include' });
-			if (r.ok) {
-				host = h;
-				await chrome.storage.local.set({ host: h });
-				return h;
-			}
-		} catch {
-			/* next */
+		if (await probe(h).catch(() => false)) {
+			host = h;
+			await chrome.storage.local.set({ host: h });
+			return h;
 		}
 	}
-	return (host = HOSTS[1]);
+	return (host = HOSTS[0]);
 }
 
 async function api(path, init = {}) {
 	const h = await pickHost();
-	const r = await fetch(h + path, { credentials: 'include', ...init });
+	const r = await fetch(h + path, { credentials: 'include', signal: AbortSignal.timeout(10000), ...init });
 	const body = await r.json().catch(() => ({}));
 	return { status: r.status, ...body };
 }
